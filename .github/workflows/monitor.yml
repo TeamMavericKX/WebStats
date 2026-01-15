@@ -1,0 +1,57 @@
+name: Monitor
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+
+      - name: Run checks
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm runner:check
+
+      - name: Generate CNAME file if custom domain is set
+        run: |
+          CUSTOM_DOMAIN=$(yq '.site.customDomain' monitor.config.yml)
+          if [ ! -z "$CUSTOM_DOMAIN" ] && [ "$CUSTOM_DOMAIN" != "null" ] && [ "$CUSTOM_DOMAIN" != '""' ]; then
+            echo "$CUSTOM_DOMAIN" > apps/site/public/CNAME
+            echo "Created CNAME file with: $CUSTOM_DOMAIN"
+          fi
+
+      - name: Commit changes (if any)
+        run: |
+          git config user.name "webstats-bot"
+          git config user.email "webstats-bot@users.noreply.github.com"
+          git add data apps/site/public/CNAME
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(monitor): update status data [skip ci]"
+          git push
