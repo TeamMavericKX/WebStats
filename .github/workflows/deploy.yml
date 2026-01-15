@@ -43,8 +43,9 @@ jobs:
 
       - name: Generate CNAME file if custom domain is set
         run: |
-          CUSTOM_DOMAIN=$(yq '.site.customDomain' monitor.config.yml)
-          if [ ! -z "$CUSTOM_DOMAIN" ] && [ "$CUSTOM_DOMAIN" != "null" ] && [ "$CUSTOM_DOMAIN" != '""' ]; then
+          # Extract custom domain using grep/sed to avoid external dependencies
+          CUSTOM_DOMAIN=$(grep -A 5 "site:" monitor.config.yml | grep "customDomain:" | head -1 | sed 's/.*customDomain:[[:space:]]*"\?\([^"]*\)"\?.*/\1/')
+          if [ ! -z "$CUSTOM_DOMAIN" ] && [ "$CUSTOM_DOMAIN" != "" ] && [ "$CUSTOM_DOMAIN" != "null" ]; then
             mkdir -p apps/site/public
             echo "$CUSTOM_DOMAIN" > apps/site/public/CNAME
             echo "Created CNAME file with: $CUSTOM_DOMAIN"
