@@ -25,7 +25,39 @@ try {
           const configPath = path.join(process.cwd(), '..', '..', 'monitor.config.yml');
           if (fs.existsSync(configPath)) {
             const jsYaml = await import('js-yaml');
-            const config = jsYaml.load(fs.readFileSync(configPath, 'utf8'));
+
+            interface Service {
+              id: string;
+              name: string;
+              url: string;
+              group: string;
+              method: string;
+              assertions: {
+                status: number[];
+              };
+            }
+            
+            interface Config {
+              site: {
+                name: string;
+                description: string;
+                baseUrl: string;
+                customDomain: string;
+                theme: {
+                  accent: string;
+                  logo: string;
+                };
+              };
+              monitor: {
+                timeoutMs: number;
+                retries: number;
+                concurrency: number;
+                userAgent: string;
+              };
+              services: Service[];
+            }
+
+            const config = jsYaml.load(fs.readFileSync(configPath, 'utf8')) as Config;
             
             const serviceId = file.replace('.json', '');
             const serviceConfig = config.services.find((s: any) => s.id === serviceId);
