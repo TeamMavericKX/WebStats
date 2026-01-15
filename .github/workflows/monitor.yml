@@ -53,6 +53,10 @@ jobs:
         run: |
           git config user.name "webstats-bot"
           git config user.email "webstats-bot@users.noreply.github.com"
-          git add data apps/site/public/CNAME
-          # Only commit if there are actually changes to the data
+          
+          # Use --ignore-unmatch to prevent exit code 128 if CNAME doesn't exist
+          git add data/
+          git add apps/site/public/CNAME --ignore-unmatch
+          
+          # Only commit and push if there are actual changes
           git diff --cached --quiet || (git commit -m "chore(monitor): update status data [skip ci]" && git push)
