@@ -27,18 +27,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          # Cache removed to prevent "Path Validation Error"
 
       - name: Install and Build
         run: |
           pnpm install --frozen-lockfile
-          # This builds the TypeScript into the /dist folder
-          pnpm run build
+          pnpm run build 
 
       - name: Run checks
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # Running via pnpm filter solves the "Module Not Found" issue in monorepos
         run: pnpm --filter @webstats/runner start
 
       - name: Generate CNAME file
@@ -53,10 +50,8 @@ jobs:
         run: |
           git config user.name "webstats-bot"
           git config user.email "webstats-bot@users.noreply.github.com"
-          
-          # Use --ignore-unmatch to prevent exit code 128 if CNAME doesn't exist
           git add data/
-          git add apps/site/public/CNAME --ignore-unmatch
-          
-          # Only commit and push if there are actual changes
+          if [ -f apps/site/public/CNAME ]; then
+            git add apps/site/public/CNAME
+          fi
           git diff --cached --quiet || (git commit -m "chore(monitor): update status data [skip ci]" && git push)
