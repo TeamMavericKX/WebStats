@@ -116,4 +116,4 @@ node_modules/.pnpm/
 # All other hidden directories (except .git)
 .*
 !.git/
-!.*
+!.*apps/site/.astro/
