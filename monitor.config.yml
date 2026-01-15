@@ -1,7 +1,7 @@
 site:
   name: "WebStats"
   description: "Open-source uptime monitoring on GitHub Actions + Pages"
-  baseUrl: "https://<your-username>.github.io/webstats"
+  baseUrl: "https://10xdev4u-alt.github.io/webstats"
   customDomain: ""  # Leave empty for default GitHub Pages, e.g., "status.example.com" for custom domain
   theme:
     accent: "#bef264"
