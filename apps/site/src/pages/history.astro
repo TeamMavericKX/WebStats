@@ -1,0 +1,100 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Read historical data from data files
+const fs = await import('node:fs');
+const path = await import('node:path');
+
+let checks = [];
+const dataDir = path.join(process.cwd(), '..', '..', 'data');
+
+try {
+  if (fs.existsSync(dataDir)) {
+    const checksDir = path.join(dataDir, 'checks');
+    if (fs.existsSync(checksDir)) {
+      const checkFiles = fs.readdirSync(checksDir);
+      
+      for (const file of checkFiles) {
+        if (file.endsWith('.ndjson')) {
+          const serviceId = file.replace('.ndjson', '');
+          const content = fs.readFileSync(path.join(checksDir, file), 'utf8');
+          const lines = content.trim().split('\n').filter(line => line);
+          
+          // Get last 50 checks for each service
+          const recentLines = lines.slice(-50);
+          
+          for (const line of recentLines) {
+            if (line.trim()) {
+              const check = JSON.parse(line);
+              check.serviceId = serviceId;
+              checks.push(check);
+            }
+          }
+        }
+      }
+    }
+  }
+} catch (e) {
+  console.error('Error loading check history:', e);
+}
+
+// Sort by timestamp, newest first
+checks.sort((a, b) => b.timestamp - a.timestamp);
+---
+
+<Layout>
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-terminal-white mb-2 font-mono">Check History</h1>
+    <p class="text-terminal-dim font-mono text-sm">Chronological view of all monitoring events</p>
+  </div>
+  
+  <div class="overflow-x-auto rounded-lg border border-terminal-divider/30 bg-terminal-dark/20">
+    <table class="min-w-full border-collapse font-mono">
+      <thead class="bg-terminal-dark/50">
+        <tr>
+          <th class="text-left p-3 text-terminal-dim font-bold text-xs uppercase tracking-wider">Service</th>
+          <th class="text-left p-3 text-terminal-dim font-bold text-xs uppercase tracking-wider">Status</th>
+          <th class="text-left p-3 text-terminal-dim font-bold text-xs uppercase tracking-wider">Response</th>
+          <th class="text-left p-3 text-terminal-dim font-bold text-xs uppercase tracking-wider">Timestamp</th>
+          <th class="text-left p-3 text-terminal-dim font-bold text-xs uppercase tracking-wider">Message</th>
+        </tr>
+      </thead>
+      <tbody>
+        {checks.map((check, index) => (
+          <tr class={`border-b border-terminal-divider/20 ${index % 2 === 0 ? 'bg-terminal-black/20' : 'bg-terminal-dark/10'} hover:bg-terminal-cyan/5 transition-colors`}>
+            <td class="p-3">
+              <span class="text-terminal-white font-bold">{check.serviceId}</span>
+            </td>
+            <td class="p-3">
+              <span class={`px-2 py-1 rounded text-xs font-bold ${
+                check.status === 'up' 
+                  ? 'bg-terminal-cyan/10 text-terminal-cyan border border-terminal-cyan/30' 
+                  : 'bg-red-900/20 text-red-400 border border-red-400/30'
+              }`}>
+                {check.status.toUpperCase()}
+              </span>
+            </td>
+            <td class="p-3">
+              <span class="text-terminal-violet font-bold">{check.responseTime ? `${check.responseTime}ms` : '-'}</span>
+            </td>
+            <td class="p-3 text-terminal-code-gray text-sm">
+              {new Date(check.timestamp).toLocaleString()}
+            </td>
+            <td class="p-3 text-terminal-dim text-sm max-w-xs truncate">
+              {check.message}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  
+  {checks.length === 0 && (
+    <div class="text-center py-16">
+      <div class="inline-block p-4 bg-terminal-dark/50 rounded-lg border border-terminal-divider/30">
+        <p class="text-terminal-dim font-mono text-lg mb-2"> awaiting historical data...</p>
+        <p class="text-terminal-code-gray font-mono text-sm">Run the monitor to populate check history</p>
+      </div>
+    </div>
+  )}
+</Layout>
