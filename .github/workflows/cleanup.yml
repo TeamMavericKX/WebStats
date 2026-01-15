@@ -1,0 +1,48 @@
+name: Cleanup Data
+
+on:
+  schedule:
+    - cron: "0 2 * * 1"  # Weekly on Monday at 2 AM
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+
+      - name: Run cleanup script
+        run: |
+          # This would run a cleanup script to compress old data
+          # For now, just a placeholder
+          echo "Running data cleanup..."
+          node scripts/cleanup.js || echo "Cleanup script not implemented yet"
+
+      - name: Commit cleaned data (if any changes)
+        run: |
+          git config user.name "webstats-bot"
+          git config user.email "webstats-bot@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(cleanup): compress old monitoring data [skip ci]"
+          git push
