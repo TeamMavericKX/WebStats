@@ -11,7 +11,11 @@
     "site:preview": "cd apps/site && pnpm preview",
     "runner:check": "node apps/runner/dist/index.js",
     "runner:dev": "nodemon --exec ts-node apps/runner/src/index.ts",
-    "install:deps": "pnpm install && cd apps/site && pnpm install && cd ../runner && pnpm install"
+    "install:deps": "pnpm install && cd apps/site && pnpm install && cd ../runner && pnpm install",
+    "auto:setup": "bash auto-run.sh auto",
+    "auto:check": "bash auto-run.sh check",
+    "auto:status": "bash auto-run.sh status",
+    "auto:build": "bash auto-run.sh build"
   },
   "keywords": [
     "uptime-monitoring",
