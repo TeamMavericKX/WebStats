@@ -1,0 +1,6 @@
+This is a placeholder for the terminal UI screenshot.
+Replace this file with an actual screenshot showing the terminal-core design.
+
+Recommended dimensions: 1200x800 pixels
+Format: PNG or JPEG
+File size: < 500KB
