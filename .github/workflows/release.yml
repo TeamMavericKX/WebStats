@@ -87,7 +87,8 @@ jobs:
         id: release_notes
         run: |
           # Create release notes based on git history or use a template
-          RELEASE_NOTES="# WebStats ${VERSION} Release
+          RELEASE_NOTES=$(cat <<EOF
+# WebStats ${VERSION} Release
 
 ## What's New
 - Latest stable build of WebStats monitoring platform
@@ -108,7 +109,8 @@ jobs:
 - Documentation
 - GitHub Actions workflows
 - Configuration templates
-          "
+EOF
+)
           echo "$RELEASE_NOTES" > release-notes.txt
 
       - name: Create Release
