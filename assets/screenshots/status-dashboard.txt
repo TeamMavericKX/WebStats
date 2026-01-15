@@ -1,0 +1,6 @@
+This is a placeholder for the status dashboard screenshot.
+Replace this file with an actual screenshot of your WebStats status page.
+
+Recommended dimensions: 1200x800 pixels
+Format: PNG or JPEG
+File size: < 500KB
