@@ -1,0 +1,22 @@
+[Unit]
+Description=WebStats Monitoring Service
+After=network.target
+
+[Service]
+Type=simple
+User=%i
+WorkingDirectory=/home/%i/webstats
+ExecStart=/usr/bin/npm run runner:check
+Restart=always
+RestartSec=30
+Environment=NODE_ENV=production
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/home/%i/webstats/data
+
+[Install]
+WantedBy=multi-user.target
