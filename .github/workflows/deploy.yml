@@ -1,0 +1,70 @@
+name: Deploy Status Site
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "apps/site/**"
+      - "data/**"
+      - "monitor.config.yml"
+  workflow_run:
+    workflows: ["Monitor"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+
+      - name: Generate CNAME file if custom domain is set
+        run: |
+          CUSTOM_DOMAIN=$(yq '.site.customDomain' monitor.config.yml)
+          if [ ! -z "$CUSTOM_DOMAIN" ] && [ "$CUSTOM_DOMAIN" != "null" ] && [ "$CUSTOM_DOMAIN" != '""' ]; then
+            mkdir -p apps/site/public
+            echo "$CUSTOM_DOMAIN" > apps/site/public/CNAME
+            echo "Created CNAME file with: $CUSTOM_DOMAIN"
+          fi
+
+      - name: Build site
+        run: pnpm site:build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/site/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
