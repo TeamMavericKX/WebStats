@@ -1,0 +1,6 @@
+This is a placeholder for the favicon.
+Replace this file with your actual favicon.
+
+Recommended dimensions: 32x32 pixels
+Format: ICO or PNG
+File size: < 10KB
