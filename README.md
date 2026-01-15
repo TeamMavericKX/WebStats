@@ -2,6 +2,10 @@
 
 Open-source uptime monitoring on GitHub Actions + Pages. Inspired by Upptime but with modern UI and enhanced features.
 
+<p align="center">
+  <img src="./assets/screenshots/status-dashboard.png" alt="WebStats Status Dashboard" width="600"/>
+</p>
+
 ## Features
 
 - 🚀 **Free hosting** on GitHub Pages
@@ -13,6 +17,10 @@ Open-source uptime monitoring on GitHub Actions + Pages. Inspired by Upptime but
 - 📈 **Historical data** with NDJSON storage format
 - 🛠 **Easy setup** with template repository
 - 💻 **Maintained by princetheprogrammer** - Built for developers, by developers
+
+<p align="center">
+  <img src="./assets/screenshots/terminal-ui.png" alt="Terminal-Core UI Design" width="600"/>
+</p>
 
 ## Quick Start
 
@@ -137,6 +145,10 @@ For comprehensive documentation, see the [docs/](./docs/) directory:
 - [Development](./docs/development/) - Setup and contribution guides
 - [Future Roadmap](./docs/future/roadmap.md) - Planned features and enhancements
 - [Contributing](./CONTRIBUTING.md) - How to contribute to the project
+
+<p align="center">
+  <img src="./assets/screenshots/architecture-diagram.png" alt="WebStats Architecture" width="600"/>
+</p>
 
 ## How it works
 
