@@ -27,7 +27,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # FIX: Install pnpm BEFORE setup-node
       - uses: pnpm/action-setup@v4
         with:
           version: 9
@@ -36,15 +35,14 @@ jobs:
         with:
           node-version: 20
           cache: "pnpm"
+          # Ensures the cache action finds your lockfile
+          cache-dependency-path: "pnpm-lock.yaml"
 
       - name: Install dependencies
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
-      - name: Generate CNAME file if custom domain is set
+      - name: Generate CNAME file
         run: |
-          # Extract custom domain using grep/sed to avoid external dependencies
           CUSTOM_DOMAIN=$(grep -A 5 "site:" monitor.config.yml | grep "customDomain:" | head -1 | sed 's/.*customDomain:[[:space:]]*"\?\([^"]*\)"\?.*/\1/')
           if [ ! -z "$CUSTOM_DOMAIN" ] && [ "$CUSTOM_DOMAIN" != "" ] && [ "$CUSTOM_DOMAIN" != "null" ]; then
             mkdir -p apps/site/public
