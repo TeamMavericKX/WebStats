@@ -1,0 +1,8 @@
+{"id":"api","timestamp":1768488876050,"status":"down","responseTime":143,"message":"Request failed with status code 404"}
+{"id":"api","timestamp":1768489317640,"status":"up","statusCode":200,"responseTime":1360,"message":"OK"}
+{"id":"api","timestamp":1768489435219,"status":"up","statusCode":200,"responseTime":951,"message":"OK"}
+{"id":"api","timestamp":1768489496601,"status":"up","statusCode":200,"responseTime":919,"message":"OK"}
+{"id":"api","timestamp":1768489557984,"status":"up","statusCode":200,"responseTime":1078,"message":"OK"}
+{"id":"api","timestamp":1768489619704,"status":"up","statusCode":200,"responseTime":914,"message":"OK"}
+{"id":"api","timestamp":1768489681880,"status":"up","statusCode":200,"responseTime":929,"message":"OK"}
+{"id":"api","timestamp":1768490580355,"status":"up","statusCode":200,"responseTime":963,"message":"OK"}
