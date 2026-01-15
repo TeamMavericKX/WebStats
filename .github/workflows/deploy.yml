@@ -51,6 +51,19 @@ jobs:
             echo "Created CNAME file with: $CUSTOM_DOMAIN"
           fi
 
+      - name: Set PUBLIC_BASE_URL for Astro build
+        id: set_base_url
+        run: |
+          CUSTOM_DOMAIN=$(grep -A 5 "site:" monitor.config.yml | grep "customDomain:" | head -1 | sed 's/.*customDomain:[[:space:]]*"\?\([^"]*\)"\?.*/\1/')
+          if [ -z "$CUSTOM_DOMAIN" ] || [ "$CUSTOM_DOMAIN" == "null" ]; then
+            # Not using a custom domain, so it's a project page. Set base to /repo-name/
+            REPO_NAME="${GITHUB_REPOSITORY#*/}"
+            echo "PUBLIC_BASE_URL=/${REPO_NAME}/" >> "$GITHUB_ENV"
+            echo "Setting PUBLIC_BASE_URL to /${REPO_NAME}/"
+          else
+            # Using a custom domain, base will default to / as per astro.config.mjs
+            echo "Custom domain detected, PUBLIC_BASE_URL will default to /."
+          fi
       - name: Build site
         run: pnpm site:build
 
