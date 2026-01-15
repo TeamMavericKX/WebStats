@@ -1,0 +1,6 @@
+This is a placeholder for the architecture diagram.
+Replace this file with an actual architecture diagram of WebStats.
+
+Recommended dimensions: 1200x800 pixels
+Format: PNG or SVG
+File size: < 500KB
