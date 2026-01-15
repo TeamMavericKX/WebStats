@@ -1,0 +1,94 @@
+---
+import Layout from '../layouts/Layout.astro';
+import StatusCard from '../components/StatusCard.astro';
+
+// Read service statuses from data files
+const fs = await import('node:fs');
+const path = await import('node:path');
+
+let services = [];
+const dataDir = path.join(process.cwd(), '..', '..', 'data');
+
+try {
+  if (fs.existsSync(dataDir)) {
+    const summaryDir = path.join(dataDir, 'summary');
+    if (fs.existsSync(summaryDir)) {
+      const summaryFiles = fs.readdirSync(summaryDir);
+      
+      for (const file of summaryFiles) {
+        if (file.endsWith('.json')) {
+          const summaryData = JSON.parse(
+            fs.readFileSync(path.join(summaryDir, file), 'utf8')
+          );
+          
+          // Get service name from config
+          const configPath = path.join(process.cwd(), '..', '..', 'monitor.config.yml');
+          if (fs.existsSync(configPath)) {
+            const jsYaml = await import('js-yaml');
+            const config = jsYaml.load(fs.readFileSync(configPath, 'utf8'));
+            
+            const serviceId = file.replace('.json', '');
+            const serviceConfig = config.services.find((s: any) => s.id === serviceId);
+            
+            if (serviceConfig) {
+              services.push({
+                ...serviceConfig,
+                status: summaryData.lastStatus,
+                uptimePercentage: summaryData.uptimePercentage?.toFixed(2),
+                avgResponseTime: summaryData.avgResponseTime?.toFixed(2),
+                lastChecked: new Date(summaryData.lastChecked).toLocaleString()
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+} catch (e) {
+  console.error('Error loading service data:', e);
+}
+---
+
+<Layout>
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-terminal-white mb-2 font-mono">Service Status</h1>
+    <p class="text-terminal-dim font-mono text-sm">Real-time monitoring of system health and availability</p>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {services.map(service => (
+      <StatusCard 
+        name={service.name} 
+        status={service.status} 
+        uptime={service.uptimePercentage} 
+        responseTime={service.avgResponseTime}
+        lastChecked={service.lastChecked}
+        group={service.group}
+      />
+    ))}
+  </div>
+  
+  {services.length === 0 && (
+    <div class="text-center py-16">
+      <div class="inline-block p-4 bg-terminal-dark/50 rounded-lg border border-terminal-divider/30">
+        <p class="text-terminal-dim font-mono text-lg mb-2"> awaiting initial data...</p>
+        <p class="text-terminal-code-gray font-mono text-sm">Run the monitor to collect service status data</p>
+      </div>
+    </div>
+  )}
+  
+  <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+    <div class="bg-terminal-dark/30 p-4 rounded border border-terminal-divider/30">
+      <h3 class="text-terminal-cyan font-mono font-bold mb-2">uptime</h3>
+      <p class="text-terminal-white font-mono">Percentage of time service is operational</p>
+    </div>
+    <div class="bg-terminal-dark/30 p-4 rounded border border-terminal-divider/30">
+      <h3 class="text-terminal-violet font-mono font-bold mb-2">response time</h3>
+      <p class="text-terminal-white font-mono">Average response time in milliseconds</p>
+    </div>
+    <div class="bg-terminal-dark/30 p-4 rounded border border-terminal-divider/30">
+      <h3 class="text-terminal-indigo font-mono font-bold mb-2">status</h3>
+      <p class="text-terminal-white font-mono">Current operational state of service</p>
+    </div>
+  </div>
+</Layout>
