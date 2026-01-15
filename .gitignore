@@ -1,0 +1,119 @@
+# Dependencies
+**/node_modules/
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+.next/
+.nuxt/
+.output/
+.svelte-kit/
+coverage/
+.nyc_output/
+
+# Runner build
+apps/runner/dist/
+
+# App-specific build outputs
+apps/site/dist/
+
+# App-specific hidden directories
+apps/site/.astro/
+apps/site/.vite/
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Temporary folders
+tmp/
+temp/
+
+# Production
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local environment settings
+.env.local
+.env.*.local
+
+# Data directory - though we want to track data files, we might want to ignore certain temp files
+data/*.tmp
+data/temp/
+
+# Sensitive files
+secrets/
+config/secrets.*
+credentials.json
+*.key
+*.pem
+
+# Testing
+junit.xml
+coverage.xml
+
+# Editor files
+*.sublime-project
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# pnpm specific
+node_modules/.pnpm/
+.pnp.*
+
+# All bin directories (recursive)
+**/.bin/
+
+# TypeScript
+.tsbuildinfo
+
+# GitHub related (but keep .github for workflows)
+.github/
+!.github/
+!.github/workflows/
+!.github/ISSUE_TEMPLATE/
+!.github/dependabot.yml
+
+# All other hidden directories (except .git)
+.*
+!.git/
+!.*
