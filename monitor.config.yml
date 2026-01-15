@@ -1,0 +1,63 @@
+site:
+  name: "WebStats"
+  description: "Open-source uptime monitoring on GitHub Actions + Pages"
+  baseUrl: "https://<your-username>.github.io/webstats"
+  customDomain: ""  # Leave empty for default GitHub Pages, e.g., "status.example.com" for custom domain
+  theme:
+    accent: "#bef264"
+    logo: "/logo.svg"
+
+monitor:
+  timeoutMs: 8000
+  retries: 1
+  concurrency: 10
+  userAgent: "WebStatsBot/1.0"
+
+services:
+  - id: google
+    name: "Google"
+    url: "https://www.google.com"
+    group: "Search Engines"
+    method: "GET"
+    assertions:
+      status: [200]
+
+  - id: discord
+    name: "Discord"
+    url: "https://discord.com"
+    group: "Communication"
+    method: "GET"
+    assertions:
+      status: [200]
+
+  - id: cloudflare
+    name: "Cloudflare"
+    url: "https://www.cloudflare.com"
+    group: "CDN/Security"
+    method: "GET"
+    assertions:
+      status: [200]
+
+  - id: aws
+    name: "AWS"
+    url: "https://aws.amazon.com"
+    group: "Cloud Services"
+    method: "GET"
+    assertions:
+      status: [200]
+
+  - id: github
+    name: "GitHub"
+    url: "https://github.com"
+    group: "Development"
+    method: "GET"
+    assertions:
+      status: [200]
+
+  - id: reddit
+    name: "Reddit"
+    url: "https://www.reddit.com"
+    group: "Social Media"
+    method: "GET"
+    assertions:
+      status: [200]
