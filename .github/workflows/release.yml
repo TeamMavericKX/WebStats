@@ -86,30 +86,26 @@ jobs:
       - name: Generate release notes
         id: release_notes
         run: |
-          # Create release notes based on git history or use a template
-          RELEASE_NOTES="# WebStats ${VERSION} Release
+          cat <<EOF > release-notes.txt
+          # WebStats ${VERSION} Release
 
-## What's New
-- Latest stable build of WebStats monitoring platform
-- Includes all features: monitoring, status page, CI/CD workflows
-- Ready for GitHub Pages deployment
+          ## What's New
+          - Latest stable build of WebStats monitoring platform
+          - Includes all features: monitoring, status page, CI/CD workflows
+          - Ready for GitHub Pages deployment
 
-## Installation
-\`\`\`bash
-# Download the release
-# Extract and run: pnpm install && pnpm build
-# Configure monitor.config.yml with your services
-# Enable GitHub Actions and Pages
-\`\`\`
+          ## Installation
+          \`\`\`bash
+          pnpm install && pnpm build
+          \`\`\`
 
-## Files Included
-- Complete source code
-- Pre-built binaries
-- Documentation
-- GitHub Actions workflows
-- Configuration templates
-          "
-          echo "$RELEASE_NOTES" > release-notes.txt
+          ## Files Included
+          - Complete source code
+          - Pre-built binaries
+          - Documentation
+          - GitHub Actions workflows
+          - Configuration templates
+          EOF
 
       - name: Create Release
         id: create_release
@@ -121,7 +117,7 @@ jobs:
           release_name: "WebStats ${{ env.VERSION }}"
           body_path: release-notes.txt
           draft: false
-          prerelease: ${{ github.event.inputs.prerelease || false }}
+          prerelease: ${{ github.event.inputs.prerelease == 'true' }}
 
       - name: Upload ZIP asset
         uses: actions/upload-release-asset@v1
