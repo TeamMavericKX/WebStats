@@ -1,11 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import StatusCard from '../components/StatusCard.astro';
+import jsYaml from 'js-yaml';
+import fs from 'node:fs';
+import path from 'node:path';
 
 // Read service statuses from data files
-const fs = await import('node:fs');
-const path = await import('node:path');
-
 let services = [];
 const dataDir = path.join(process.cwd(), '..', '..', 'data');
 
@@ -24,7 +24,6 @@ try {
           // Get service name from config
           const configPath = path.join(process.cwd(), '..', '..', 'monitor.config.yml');
           if (fs.existsSync(configPath)) {
-            const jsYaml = await import('js-yaml');
 
             interface Service {
               id: string;

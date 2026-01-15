@@ -67,6 +67,9 @@ importers:
       astro:
         specifier: ^4.8.6
         version: 4.16.19(@types/node@20.19.29)(rollup@4.55.1)(typescript@5.9.3)
+      js-yaml:
+        specifier: ^4.1.1
+        version: 4.1.1
       react:
         specifier: ^18.2.0
         version: 18.3.1
