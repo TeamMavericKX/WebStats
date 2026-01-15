@@ -123,7 +123,7 @@ EOF
           release_name: "WebStats ${{ env.VERSION }}"
           body_path: release-notes.txt
           draft: false
-          prerelease: ${{ github.event.inputs.prerelease || false }}
+          prerelease: ${{ github.event.inputs.prerelease == 'true' }}
 
       - name: Upload ZIP asset
         uses: actions/upload-release-asset@v1
