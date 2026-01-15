@@ -1,0 +1,46 @@
+---
+interface Props {
+  name: string;
+  status: string;
+  uptime: string;
+  responseTime: string;
+  lastChecked: string;
+  group: string;
+}
+const { name, status, uptime, responseTime, lastChecked, group } = Astro.props;
+---
+
+<div class="status-card bg-terminal-dark p-5 rounded-lg border border-terminal-divider hover:border-terminal-cyan transition-all duration-300">
+  <div class="flex justify-between items-start mb-3">
+    <div>
+      <h3 class="font-mono font-bold text-terminal-white text-lg tracking-tight">{name}</h3>
+      <p class="text-terminal-dim text-sm font-mono mt-1">{group}</p>
+    </div>
+    <span class={`px-3 py-1 rounded-md text-xs font-mono font-bold ${
+      status === 'up' 
+        ? 'bg-terminal-cyan/10 text-terminal-cyan border border-terminal-cyan/30' 
+        : status === 'down' 
+          ? 'bg-red-900/20 text-red-400 border border-red-400/30' 
+          : 'bg-yellow-900/20 text-yellow-400 border border-yellow-400/30'
+    }`}>
+      {status?.toUpperCase()}
+    </span>
+  </div>
+  
+  <div class="mt-4 grid grid-cols-2 gap-4">
+    <div class="bg-terminal-black/50 p-3 rounded border border-terminal-divider/30">
+      <p class="text-terminal-dim text-xs font-mono uppercase tracking-wider">Uptime</p>
+      <p class="font-mono font-bold text-terminal-cyan text-lg mt-1">{uptime}%</p>
+    </div>
+    <div class="bg-terminal-black/50 p-3 rounded border border-terminal-divider/30">
+      <p class="text-terminal-dim text-xs font-mono uppercase tracking-wider">Response</p>
+      <p class="font-mono font-bold text-terminal-violet text-lg mt-1">{responseTime}ms</p>
+    </div>
+  </div>
+  
+  <div class="mt-4 pt-3 border-t border-terminal-divider/30">
+    <p class="text-terminal-code-gray text-xs font-mono">
+      <span class="text-terminal-dim">Last checked:</span> {lastChecked}
+    </p>
+  </div>
+</div>
