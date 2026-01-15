@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --terminal-black: #0a0a0a;
+  --terminal-dark: #1a202c;
+  --terminal-slate: #4a5568;
+  --terminal-divider: #2d3748;
+  --terminal-cyan: #06b6d4;
+  --terminal-indigo: #8b5cf6;
+  --terminal-violet: #a78bfa;
+  --terminal-white: #f7fafc;
+  --terminal-code-gray: #a0aec0;
+  --terminal-dim: #718096;
+}
+
+body {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+  background-color: var(--terminal-black);
+  color: var(--terminal-white);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Terminal-style code highlighting */
+.code-keyword {
+  color: var(--terminal-cyan);
+  font-weight: bold;
+}
+
+.code-function {
+  color: var(--terminal-violet);
+}
+
+.code-string {
+  color: var(--terminal-indigo);
+}
+
+.code-comment {
+  color: var(--terminal-dim);
+}
+
+/* Enhanced card styling */
+.status-card {
+  background: linear-gradient(145deg, var(--terminal-dark), var(--terminal-black));
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.status-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 15px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 0 1px var(--terminal-cyan);
+}
+
+/* Terminal-style scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--terminal-black);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--terminal-slate);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--terminal-cyan);
+}
