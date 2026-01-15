@@ -61,11 +61,3 @@ services:
     method: "GET"
     assertions:
       status: [200]
-
-  - id: bing
-    name: "Bing"
-    url: "https://www.bing.com"
-    group: "Search Engines"
-    method: "GET"
-    assertions:
-      status: [200]
