@@ -1,0 +1,116 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Read incident data from data files
+const fs = await import('node:fs');
+const path = await import('node:path');
+
+let incidents = [];
+const dataDir = path.join(process.cwd(), '..', '..', 'data');
+
+try {
+  if (fs.existsSync(dataDir)) {
+    const incidentsDir = path.join(dataDir, 'incidents');
+    if (fs.existsSync(incidentsDir)) {
+      // For now, just list any incident files
+      const incidentFiles = fs.readdirSync(incidentsDir);
+      
+      for (const file of incidentFiles) {
+        if (file.endsWith('.json')) {
+          const incidentData = JSON.parse(
+            fs.readFileSync(path.join(incidentsDir, file), 'utf8')
+          );
+          incidents.push(incidentData);
+        }
+      }
+    }
+  }
+} catch (e) {
+  console.error('Error loading incidents:', e);
+}
+
+// Sample incidents data (until we implement incident creation)
+const sampleIncidents = [
+  {
+    id: 'inc-001',
+    service: 'API Health',
+    title: 'API experiencing slow response times',
+    status: 'resolved',
+    severity: 'major',
+    startTime: Date.now() - 3600000,
+    endTime: Date.now() - 1800000,
+    description: 'Our API service experienced elevated latency affecting some requests.'
+  },
+  {
+    id: 'inc-002',
+    service: 'Authentication Service',
+    title: 'Login service temporarily unavailable',
+    status: 'resolved',
+    severity: 'critical',
+    startTime: Date.now() - 86400000, // 24 hours ago
+    endTime: Date.now() - 82800000, // 23 hours ago
+    description: 'Users experienced issues logging into the system during maintenance window.'
+  }
+];
+---
+
+<Layout>
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-terminal-white mb-2 font-mono">Incidents</h1>
+    <p class="text-terminal-dim font-mono text-sm">Historical record of service disruptions and resolutions</p>
+  </div>
+  
+  <div class="space-y-5">
+    {sampleIncidents.map(incident => (
+      <div class="bg-terminal-dark/30 p-5 rounded-lg border border-terminal-divider/30 hover:border-terminal-cyan/30 transition-colors">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <h3 class="font-bold text-terminal-white text-lg font-mono tracking-tight">{incident.title}</h3>
+            <p class="text-terminal-cyan font-mono text-sm mt-1">{incident.service}</p>
+          </div>
+          <span class={`px-3 py-1 rounded-md text-xs font-mono font-bold ${
+            incident.status === 'resolved' 
+              ? 'bg-terminal-cyan/10 text-terminal-cyan border border-terminal-cyan/30' 
+              : incident.status === 'investigating' 
+                ? 'bg-yellow-900/20 text-yellow-400 border border-yellow-400/30' 
+                : 'bg-red-900/20 text-red-400 border border-red-400/30'
+          }`}>
+            {incident.status.toUpperCase()}
+          </span>
+        </div>
+        
+        <div class="mt-3 mb-4">
+          <p class="text-terminal-white font-mono text-sm leading-relaxed">{incident.description}</p>
+        </div>
+        
+        <div class="flex flex-wrap gap-4 text-xs font-mono text-terminal-dim border-t border-terminal-divider/30 pt-3">
+          <span class="flex items-center">
+            <span class="text-terminal-cyan mr-1">started:</span>
+            {new Date(incident.startTime).toLocaleString()}
+          </span>
+          <span class="flex items-center">
+            <span class="text-terminal-violet mr-1">resolved:</span>
+            {new Date(incident.endTime).toLocaleString()}
+          </span>
+          <span class="flex items-center">
+            <span class="text-terminal-indigo mr-1">severity:</span>
+            <span class={`${
+              incident.severity === 'critical' ? 'text-red-400' :
+              incident.severity === 'major' ? 'text-yellow-400' :
+              'text-terminal-cyan'
+            }`}>{incident.severity.toUpperCase()}</span>
+          </span>
+        </div>
+      </div>
+    ))}
+  </div>
+  
+  {sampleIncidents.length === 0 && (
+    <div class="text-center py-16">
+      <div class="inline-block p-4 bg-terminal-dark/50 rounded-lg border border-terminal-divider/30">
+        <p class="text-terminal-dim font-mono text-lg mb-2"> no active incidents</p>
+        <p class="text-terminal-code-gray font-mono text-sm">All systems operating normally</p>
+      </div>
+    </div>
+  )}
+</Layout>
