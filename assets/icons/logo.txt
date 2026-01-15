@@ -1,0 +1,6 @@
+This is a placeholder for the WebStats logo.
+Replace this file with your actual logo.
+
+Recommended dimensions: 200x200 pixels (square)
+Format: PNG or SVG with transparent background
+File size: < 100KB
