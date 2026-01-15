@@ -27,25 +27,26 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          # Cache removed to prevent "Path Validation Error"
 
       - name: Install and Build
         run: |
           pnpm install --frozen-lockfile
-          # IMPORTANT: Generates the JS files needed for the next step
-          pnpm run build 
+          # This builds the TypeScript into the /dist folder
+          pnpm run build
 
       - name: Run checks
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm runner:check
+        # Running via pnpm filter solves the "Module Not Found" issue in monorepos
+        run: pnpm --filter @webstats/runner start
 
-      - name: Generate CNAME file if custom domain is set
+      - name: Generate CNAME file
         run: |
           CUSTOM_DOMAIN=$(grep -A 5 "site:" monitor.config.yml | grep "customDomain:" | head -1 | sed 's/.*customDomain:[[:space:]]*"\?\([^"]*\)"\?.*/\1/')
           if [ ! -z "$CUSTOM_DOMAIN" ] && [ "$CUSTOM_DOMAIN" != "" ] && [ "$CUSTOM_DOMAIN" != "null" ]; then
             mkdir -p apps/site/public
             echo "$CUSTOM_DOMAIN" > apps/site/public/CNAME
-            echo "Created CNAME file with: $CUSTOM_DOMAIN"
           fi
 
       - name: Commit changes (if any)
@@ -53,4 +54,5 @@ jobs:
           git config user.name "webstats-bot"
           git config user.email "webstats-bot@users.noreply.github.com"
           git add data apps/site/public/CNAME
+          # Only commit if there are actually changes to the data
           git diff --cached --quiet || (git commit -m "chore(monitor): update status data [skip ci]" && git push)

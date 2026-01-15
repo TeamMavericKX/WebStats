@@ -33,12 +33,12 @@ importers:
       fs-extra:
         specifier: ^11.2.0
         version: 11.3.3
+      js-yaml:
+        specifier: ^4.1.0
+        version: 4.1.1
       ndjson:
         specifier: ^2.0.0
         version: 2.0.0
-      yaml:
-        specifier: ^2.4.2
-        version: 2.8.2
     devDependencies:
       '@types/fs-extra':
         specifier: ^11.0.4
