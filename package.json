@@ -1,0 +1,33 @@
+{
+  "name": "webstats",
+  "version": "1.0.0",
+  "description": "Open-source uptime monitoring on GitHub Actions + Pages",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"pnpm site:dev\" \"pnpm runner:dev\"",
+    "build": "pnpm site:build",
+    "site:dev": "cd apps/site && pnpm dev",
+    "site:build": "cd apps/site && pnpm build",
+    "site:preview": "cd apps/site && pnpm preview",
+    "runner:check": "node apps/runner/dist/index.js",
+    "runner:dev": "nodemon --exec ts-node apps/runner/src/index.ts",
+    "install:deps": "pnpm install && cd apps/site && pnpm install && cd ../runner && pnpm install"
+  },
+  "keywords": [
+    "uptime-monitoring",
+    "status-page",
+    "github-actions",
+    "github-pages"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@types/node": "^20.12.7"
+  }
+}
