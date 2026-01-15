@@ -1,0 +1,147 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
+        default: '1.0.0'
+      prerelease:
+        description: 'Mark as prerelease'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+
+      - name: Build project
+        run: |
+          pnpm build
+          cd apps/runner && pnpm build && cd ../..
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event.inputs.version }}" != "" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/}"
+            if [ "$VERSION" = "$GITHUB_REF" ]; then
+              VERSION="v$(date +%Y.%m.%d)"
+            fi
+          fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Create release directory
+        run: |
+          mkdir -p release-temp/webstats-${VERSION}
+          cp -r apps release-temp/webstats-${VERSION}/
+          cp -r .github release-temp/webstats-${VERSION}/
+          cp -r scripts release-temp/webstats-${VERSION}/
+          cp -r docs release-temp/webstats-${VERSION}/
+          cp -r assets release-temp/webstats-${VERSION}/
+          cp -r README.md LICENSE.md CONTRIBUTING.md .gitignore package.json pnpm-workspace.yaml release-temp/webstats-${VERSION}/
+          cp -r monitor.config.yml release-temp/webstats-${VERSION}/ 2>/dev/null || true
+
+      - name: Create ZIP archive
+        run: |
+          cd release-temp
+          zip -r webstats-${VERSION}.zip webstats-${VERSION}/
+          cd ..
+
+      - name: Create TAR.GZ archive
+        run: |
+          cd release-temp
+          tar -czf webstats-${VERSION}.tar.gz webstats-${VERSION}/
+          cd ..
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          # Create release notes based on git history or use a template
+          RELEASE_NOTES="# WebStats ${VERSION} Release
+
+## What's New
+- Latest stable build of WebStats monitoring platform
+- Includes all features: monitoring, status page, CI/CD workflows
+- Ready for GitHub Pages deployment
+
+## Installation
+\`\`\`bash
+# Download the release
+# Extract and run: pnpm install && pnpm build
+# Configure monitor.config.yml with your services
+# Enable GitHub Actions and Pages
+\`\`\`
+
+## Files Included
+- Complete source code
+- Pre-built binaries
+- Documentation
+- GitHub Actions workflows
+- Configuration templates
+          "
+          echo "$RELEASE_NOTES" > release-notes.txt
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: "WebStats ${{ env.VERSION }}"
+          body_path: release-notes.txt
+          draft: false
+          prerelease: ${{ github.event.inputs.prerelease || false }}
+
+      - name: Upload ZIP asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release-temp/webstats-${{ env.VERSION }}.zip
+          asset_name: webstats-${{ env.VERSION }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload TAR.GZ asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release-temp/webstats-${{ env.VERSION }}.tar.gz
+          asset_name: webstats-${{ env.VERSION }}.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Cleanup
+        run: rm -rf release-temp
