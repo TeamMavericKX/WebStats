@@ -50,8 +50,16 @@ jobs:
             echo "Created CNAME file with: $CUSTOM_DOMAIN"
           fi
 
+      - name: Extract base URL from config
+        id: extract_base_url
+        run: |
+          BASE_URL=$(grep -A 10 "site:" monitor.config.yml | grep "baseUrl:" | head -1 | sed 's/.*baseUrl:[[:space:]]*"\?\([^"]*\)"\?.*/\1/')
+          echo "result=$BASE_URL" >> $GITHUB_OUTPUT
+          
       - name: Build site
         run: pnpm site:build
+        env:
+          PUBLIC_BASE_URL: ${{ steps.extract_base_url.outputs.result }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -1,6 +1,7 @@
 ---
 // Layout for the status page
 import { SITE_CONFIG } from '../config';
+import '../styles/global.css'; // Import CSS for processing by Astro/Tailwind
 ---
 
 <!DOCTYPE html>
@@ -11,7 +12,6 @@ import { SITE_CONFIG } from '../config';
     <title>{SITE_CONFIG.name}</title>
     <meta name="description" content={SITE_CONFIG.description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="stylesheet" href="/styles/global.css" />
     <!-- JetBrains Mono font for terminal-like appearance -->
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   </head>

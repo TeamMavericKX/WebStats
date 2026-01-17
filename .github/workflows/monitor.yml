@@ -28,10 +28,18 @@ jobs:
         with:
           node-version: 20
 
+      - name: Extract base URL from config
+        id: extract_base_url
+        run: |
+          BASE_URL=$(grep -A 10 "site:" monitor.config.yml | grep "baseUrl:" | head -1 | sed 's/.*baseUrl:[[:space:]]*"\?\([^"]*\)"\?.*/\1/')
+          echo "result=$BASE_URL" >> $GITHUB_OUTPUT
+          
       - name: Install and Build
         run: |
           pnpm install --frozen-lockfile
-          pnpm run build 
+          pnpm run build
+        env:
+          PUBLIC_BASE_URL: ${{ steps.extract_base_url.outputs.result }} 
 
       - name: Run checks
         env:
