@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build",
+    "build": "PUBLIC_BASE_URL=$(/home/princetheprogrammerbtw/Projects/webstats/webstatx/extract-base-url.sh) astro check && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
