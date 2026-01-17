@@ -2,6 +2,12 @@
 // Layout for the status page
 import { SITE_CONFIG } from '../config';
 import '../styles/global.css'; // Import CSS for processing by Astro/Tailwind
+
+// Get base path for navigation links
+const basePath = import.meta.env.PUBLIC_BASE_URL || '/';
+const statusLink = basePath === '/' ? '/' : basePath + '/';
+const historyLink = basePath === '/' ? '/history' : basePath + '/history';
+const incidentsLink = basePath === '/' ? '/incidents' : basePath + '/incidents';
 ---
 
 <!DOCTYPE html>
@@ -25,9 +31,9 @@ import '../styles/global.css'; // Import CSS for processing by Astro/Tailwind
         </div>
         <nav>
           <ul class="flex space-x-4">
-            <li><a href="/" class="text-terminal-white hover:text-terminal-cyan transition-colors font-mono text-xs px-2 py-1">Status</a></li>
-            <li><a href="/history" class="text-terminal-white hover:text-terminal-cyan transition-colors font-mono text-xs px-2 py-1">History</a></li>
-            <li><a href="/incidents" class="text-terminal-white hover:text-terminal-cyan transition-colors font-mono text-xs px-2 py-1">Incidents</a></li>
+            <li><a href={statusLink} class="text-terminal-white hover:text-terminal-cyan transition-colors font-mono text-xs px-2 py-1">Status</a></li>
+            <li><a href={historyLink} class="text-terminal-white hover:text-terminal-cyan transition-colors font-mono text-xs px-2 py-1">History</a></li>
+            <li><a href={incidentsLink} class="text-terminal-white hover:text-terminal-cyan transition-colors font-mono text-xs px-2 py-1">Incidents</a></li>
           </ul>
         </nav>
       </div>
