@@ -32,7 +32,14 @@ jobs:
         id: extract_base_url
         run: |
           BASE_URL=$(grep -A 10 "site:" monitor.config.yml | grep "baseUrl:" | head -1 | sed 's/.*baseUrl:[[:space:]]*"\?\([^"]*\)"\?.*/\1/')
-          echo "result=$BASE_URL" >> $GITHUB_OUTPUT
+          # Extract pathname from full URL for base configuration
+          BASE_PATH=$(echo "$BASE_URL" | sed 's|https://[^/]*/||' | sed 's|/$||')
+          if [ "$BASE_PATH" = "" ]; then
+            BASE_PATH="/"
+          else
+            BASE_PATH="/$BASE_PATH"
+          fi
+          echo "result=$BASE_PATH" >> $GITHUB_OUTPUT
           
       - name: Install and Build
         run: |
