@@ -7,5 +7,5 @@ export default defineConfig({
   integrations: [react(), tailwind()],
   output: 'static',
   adapter: undefined,
-  base: process.env.PUBLIC_BASE_URL || '/',  // Allow base URL to be set via environment variable
+  base: process.env.PUBLIC_BASE_URL || '/',
 });
